@@ -1,0 +1,285 @@
+game.Digger = me.Entity.extend({
+	init: function () {
+		var image = me.loader.getImage("digger");
+			
+		this._super(me.Entity, "init", [240, 10, {
+			image: image,
+			width: 48,
+			height: 24,
+
+		}]);
+		this.name = "theDigger";
+		this.renderable.flipX(true);
+		this.body.gravity = 0;
+		this.body.setVelocity(1, 1);
+		this.body.collisionType = me.collision.types.PLAYER_OBJECT;
+
+		this.body.removeShape(this.body.getShape(0));
+		this.body.addShape(new me.Rect(0,0,20,20));
+		this.anchorPoint.set(0, 0.5);
+
+		this.renderable.addAnimation('walk', [2, 3, 4, 5, 6], 100);
+		this.renderable.addAnimation('walkV', [12], 100);
+		this.renderable.addAnimation('stand', [0, 1], 300);
+		this.renderable.addAnimation('standV', [1, 2], 300);
+		this.renderable.addAnimation('fire', [14]);
+		this.renderable.setCurrentAnimation('walk');
+
+		this.fisrtMove = false;
+		this.downPressed = false;
+		this.upPressed = false;
+		this.leftPressed = false;
+		this.rightPressed = false;
+		this.firePressed = false;
+	},
+
+	update: function (dt) {
+
+		this._super(me.Entity, "update", [dt]);
+
+		if (me.input.isKeyPressed('left')) {
+
+			this.diggerAnim("left");
+			
+		}else if (me.input.isKeyPressed('right')) {
+			
+			this.diggerAnim("right");
+
+		}else if (me.input.isKeyPressed('up')) {
+			
+			this.diggerAnim("up");
+	
+		}else if (me.input.isKeyPressed('down')) {
+			
+			this.diggerAnim("down");			
+
+		}else if (me.input.isKeyPressed('space')) {
+			
+			this.body.vel.x = 0;
+			this.body.vel.y = 0;
+
+
+			if(!this.firePressed) {
+
+				if(this.renderable._flip.lastX) {
+
+					if(this.leftPressed) {
+						this.body.addShape(new me.Rect(-20,0,20,20));
+						this.anchorPoint.set(0.5, 0.5);	
+					}else if(this.upPressed) {
+						this.body.addShape(new me.Rect(0,-20,20,20));
+						this.anchorPoint.set(0.5, 0.5);	
+					}else if(this.downPressed) {
+						this.body.addShape(new me.Rect(0,20,20,20));
+						this.anchorPoint.set(0.5, 0.5);
+					}
+					
+				}else {
+
+					if(this.rightPressed) {
+						this.body.addShape(new me.Rect(20,0,20,20));
+						this.anchorPoint.set(0.5, 0.5);	
+					}else if(this.upPressed) {
+						this.body.addShape(new me.Rect(0,-20,20,20));
+						this.anchorPoint.set(0.5, 0.5);	
+					}else if(this.downPressed) {
+						this.body.addShape(new me.Rect(0,20,20,20));
+						this.anchorPoint.set(0.5, 0.5);
+					}
+				}
+
+			}
+
+			
+			if(!this.renderable.isCurrentAnimation('fire')) {
+
+				this.renderable.setCurrentAnimation('fire');
+			}
+
+			this.firePressed = true;
+			
+		}else {
+			
+			this.body.vel.x = 0;
+			this.body.vel.y = 0;
+
+			if(this.firePressed) {
+				
+				this.body.removeShapeAt(1);
+
+				if(this.renderable._flip.lastX) {
+					if(this.leftPressed) {
+						this.anchorPoint.set(0, 0.5);
+					}else if(this.upPressed) {
+						this.anchorPoint.set(0.5, 0);
+					}else if(this.downPressed) {
+						this.anchorPoint.set(0.5, 1);
+					}
+				}else {
+					if(this.rightPressed) {
+					 this.anchorPoint.set(1, 0.5);
+					}else if(this.upPressed) {
+						this.anchorPoint.set(0.5, 0);
+					}else if(this.downPressed) {
+						this.anchorPoint.set(0.5, 1);
+					}
+				}
+				this.firePressed = false;
+			}
+			
+			
+			if(!this.renderable.isCurrentAnimation('stand')) {
+				this.renderable.setCurrentAnimation('stand');
+			}
+		}
+
+
+		this.body.update(dt);
+
+		return true;
+		
+	},
+
+	diggerAnim: function(position) {
+
+			if(position === "up") {
+				this.firstMove = true;
+				this.body.vel.y -= this.body.accel.y * me.timer.tick;
+				this.body.vel.x = 0;
+
+				if(this.downPressed) {
+					this.renderable.flipX(this.renderable._flip.lastX ? false : true);
+					this.anchorPoint.set(0.5, 0)	
+				}
+				
+				if(!this.upPressed && !this.downPressed) {
+					
+					this.renderable.currentTransform.rotate(-Math.PI/2);
+					this.anchorPoint.set(0.5, 0)
+				}
+
+				this.upPressed = true;
+				this.downPressed = false;
+				this.leftPressed = false;
+				this.rightPressed = false;
+				
+	
+			}else if(position === "down") {
+				this.firstMove = true;
+				this.body.vel.y += this.body.accel.y * me.timer.tick;
+				this.body.vel.x = 0;
+
+
+				if(this.upPressed) {
+					this.renderable.flipX(this.renderable._flip.lastX ? false : true);	
+					this.anchorPoint.set(0.5, 1)
+				}
+
+				if(!this.upPressed && !this.downPressed) {
+					
+					this.renderable.currentTransform.rotate(Math.PI/2);
+					this.anchorPoint.set(0.5, 1)
+				}
+
+				this.downPressed = true;
+				this.upPressed = false;
+				this.leftPressed = false;
+				this.rightPressed = false;
+				
+
+				
+			}else if(position === "left") {
+				this.firstMove = true;
+				this.body.vel.x -= this.body.accel.x * me.timer.tick;
+				this.body.vel.y = 0;
+
+				if(this.rightPressed) {
+					this.renderable.flipX(true);
+					this.anchorPoint.set(0, 0.5)	
+				}
+
+				if(this.downPressed) {
+					this.renderable.currentTransform.rotate(-Math.PI/2);
+					this.anchorPoint.set(0, 0.5)
+
+					if(!this.renderable._flip.lastX) {
+						
+						this.renderable.flipX(true);
+						
+					}
+				}
+
+				if(this.upPressed) {
+					this.renderable.currentTransform.rotate(Math.PI/2);
+					this.anchorPoint.set(0, 0.5)
+
+					if(!this.renderable._flip.lastX) {
+						
+						this.renderable.flipX(true);
+						
+					}
+				}
+
+				this.leftPressed = true;
+				this.downPressed = false;
+				this.upPressed = false;
+				this.rightPressed = false;			
+
+			}else if(position === "right") {
+				this.body.vel.x += this.body.accel.x * me.timer.tick;
+				this.body.vel.y = 0;
+
+				if(!this.firstMove) {
+					this.renderable.flipX(false);
+					this.anchorPoint.set(1, 0.5)
+					this.firstMove = true;
+				}
+				
+
+				if(this.leftPressed) {	
+					this.renderable.flipX(false);
+					this.anchorPoint.set(1, 0.5)
+				}
+
+				if(this.downPressed) {
+					this.renderable.currentTransform.rotate(-Math.PI/2);
+					this.anchorPoint.set(1, 0.5)
+
+					if(this.renderable._flip.lastX) {
+						
+						this.renderable.flipX(false);
+						
+					}
+				}
+
+				if(this.upPressed) {
+					this.renderable.currentTransform.rotate(Math.PI/2);
+					this.anchorPoint.set(1, 0.5)
+
+					if(this.renderable._flip.lastX) {
+						
+						this.renderable.flipX(false);
+						
+					}
+					
+
+				}
+
+				this.rightPressed = true;
+				this.downPressed = false;
+				this.leftPressed = false;
+				this.upPressed = false;
+				
+				
+			}
+
+
+			if(!this.renderable.isCurrentAnimation('walk')) {
+				this.renderable.setCurrentAnimation('walk');
+			}
+			
+		
+
+	},
+
+});

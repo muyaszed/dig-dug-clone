@@ -31,6 +31,7 @@ var game = {
         me.state.set(me.state.PLAY, new game.PlayScreen());
 
         me.pool.register("ground", game.Ground);
+        me.pool.register("theDigger", game.Digger);
 
         // Start the game.
         me.state.change(me.state.PLAY);
