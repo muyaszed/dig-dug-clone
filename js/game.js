@@ -12,7 +12,7 @@ var game = {
     // Run on page load.
     "onload" : function () {
         // Initialize the video.
-        if (!me.video.init(960, 640, {wrapper : "screen", scale : "auto"})) {
+        if (!me.video.init(640, 480, {wrapper : "screen", scale : "auto", scaleMethod : "fit", doubleBuffering: true})) {
             alert("Your browser does not support HTML5 canvas.");
             return;
         }
@@ -30,8 +30,7 @@ var game = {
         me.state.set(me.state.MENU, new game.TitleScreen());
         me.state.set(me.state.PLAY, new game.PlayScreen());
 
-        // add our player entity in the entity pool
-        me.pool.register("mainPlayer", game.PlayerEntity);
+        me.pool.register("ground", game.Ground);
 
         // Start the game.
         me.state.change(me.state.PLAY);
