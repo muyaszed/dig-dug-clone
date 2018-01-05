@@ -32,6 +32,7 @@ var game = {
 
         me.pool.register("ground", game.Ground);
         me.pool.register("theDigger", game.Digger);
+        me.pool.register("monster", game.Monster);
 
         // Start the game.
         me.state.change(me.state.PLAY);

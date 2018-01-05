@@ -8,6 +8,7 @@ game.PlayScreen = me.ScreenObject.extend({
 
         game.levelManager = new game.LevelManager();
         game.levelManager.createLevel("level1");
+        game.levelManager.createMonsters("level1");
 
         me.game.world.addChild(new me.ColorLayer("background", "#543107"), 0);
         me.game.world.addChild(game.levelManager);

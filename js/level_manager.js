@@ -16,7 +16,16 @@ game.LevelManager = me.Container.extend({
 					[340, 365, 390, 480, "#af6a15", "yellow"],
 					[370, 480, 0, 480, "#af6a15", "yellow"]
 				]
-			}
+			},
+
+			monsters: {
+
+				"level1": [
+					[65, 103],
+					[305, 345]
+				]
+				
+			},
 		}
 	},
 
@@ -33,6 +42,16 @@ game.LevelManager = me.Container.extend({
 	        }
 		});
 
+		this.updateChildBounds();
+	},
+
+	createMonsters : function(levelName) {
+		let _this = this;
+		this.data.monsters[levelName].forEach(function(monster) {
+			
+	      	_this.addChild(me.pool.pull("monster", monster[0], monster[1]));     
+	               
+		});
 		this.updateChildBounds();
 	},
 
