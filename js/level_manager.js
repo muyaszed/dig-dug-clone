@@ -49,15 +49,22 @@ game.LevelManager = me.Container.extend({
 		let _this = this;
 		this.data.monsters[levelName].forEach(function(monster) {
 			
-	      	_this.addChild(me.pool.pull("monster", monster[0], monster[1]));     
+	      	_this.addChild(me.pool.pull("monster", monster[0], monster[1]), 3);     
 	               
 		});
 		this.updateChildBounds();
+		this.createdMonsters = true;
 	},
 
 	update :  function(dt) {
+		if(this.getChildByName("monster").length === 0 && this.createdMonsters) {
+			game.playScreen.reset();
+		}
+
+
 		this._super(me.Container, "update", [dt]);
 		this.updateChildBounds();
 		
+		return true;
 	} 
 });

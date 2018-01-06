@@ -14,6 +14,9 @@ game.Digger = me.Entity.extend({
 		this.body.setVelocity(1, 1);
 		this.body.collisionType = me.collision.types.PLAYER_OBJECT;
 
+		this.maxX = me.game.viewport.width - this.width - 136;
+		this.maxY = me.game.viewport.height - this.height;
+
 		this.body.removeShape(this.body.getShape(0));
 		this.body.addShape(new me.Rect(0,0,20,20));
 		this.anchorPoint.set(0, 0.5);
@@ -135,9 +138,38 @@ game.Digger = me.Entity.extend({
 
 
 		this.body.update(dt);
+		me.collision.check(this);
+
+		this.pos.x = this.pos.x.clamp(0, this.maxX);
+		this.pos.y = this.pos.y.clamp(0, this.maxY);
 
 		return true;
 		
+	},
+
+	onCollision: function (res, other) {
+		
+
+		if (res.b.body.collisionType === me.collision.types.WORLD_SHAPE) {
+			if(!this.renderable.isCurrentAnimation('fire')) {
+				game.levelManager.removeChild(other);
+			}
+		}else if(res.b.body.collisionType === me.collision.types.ENEMY_OBJECT) {
+			
+			if(this.renderable.isCurrentAnimation('fire')) {
+				res.b.renderable.flicker(750,function() {
+					game.levelManager.removeChild(other);
+				});
+			}else {
+				res.a.pos.sub(res.overlapV);
+				res.a.renderable.flicker(750,() => {
+					me.game.world.removeChild(this);
+				});
+				setTimeout(function() {game.playScreen.reset()}, 1000);
+				
+			}
+		}
+		return false;
 	},
 
 	diggerAnim: function(position) {

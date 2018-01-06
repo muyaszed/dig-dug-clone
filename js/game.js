@@ -27,8 +27,9 @@ var game = {
 
     // Run on game resources loaded.
     "loaded" : function () {
+        this.playScreen = new game.PlayScreen();
         me.state.set(me.state.MENU, new game.TitleScreen());
-        me.state.set(me.state.PLAY, new game.PlayScreen());
+        me.state.set(me.state.PLAY, this.playScreen);
 
         me.pool.register("ground", game.Ground);
         me.pool.register("theDigger", game.Digger);

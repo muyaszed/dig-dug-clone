@@ -4,20 +4,23 @@ game.PlayScreen = me.ScreenObject.extend({
      */
     onResetEvent: function() {
         // reset the score
+        
         game.data.score = 0;
 
         game.levelManager = new game.LevelManager();
         game.levelManager.createLevel("level1");
         game.levelManager.createMonsters("level1");
+        game.digger = me.pool.pull("theDigger");
 
         me.game.world.addChild(new me.ColorLayer("background", "#543107"), 0);
         me.game.world.addChild(game.levelManager);
-        me.game.world.addChild(me.pool.pull("theDigger"));
-
+        me.game.world.addChild(game.digger);
         // Add our HUD to the game world, add it last so that this is on top of the rest.
         // Can also be forced by specifying a "Infinity" z value to the addChild function.
         this.HUD = new game.HUD.Container();
         me.game.world.addChild(this.HUD);
+
+        
 
         me.input.bindKey(me.input.KEY.LEFT, 'left');
         me.input.bindKey(me.input.KEY.RIGHT, 'right');
