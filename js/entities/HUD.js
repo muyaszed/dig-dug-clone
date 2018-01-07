@@ -39,6 +39,13 @@ game.HUD.ScoreItem = me.Renderable.extend({
         // (size does not matter here)
         this._super(me.Renderable, 'init', [x, y, 10, 10]);
 
+        this.font = new me.BitmapFont(
+            me.loader.getBinary("PressStart2P"),
+            me.loader.getImage("PressStart2P"),
+            0.7,
+            "right",
+            "bottom"
+        );
         // local copy of the global score
         this.score = -1;
     },
@@ -59,8 +66,10 @@ game.HUD.ScoreItem = me.Renderable.extend({
     /**
      * draw the score
      */
-    draw : function (context) {
+    draw : function (renderer) {
         // draw it baby !
+        this.font.draw (renderer, game.data.score, 600, 50);
+        this.font.draw (renderer, game.data.highScore, 600, 100);
     }
 
 });

@@ -58,6 +58,7 @@ game.LevelManager = me.Container.extend({
 
 	update :  function(dt) {
 		if(this.getChildByName("monster").length === 0 && this.createdMonsters) {
+			game.data.highScore += game.data.score;
 			game.playScreen.reset();
 		}
 

@@ -157,15 +157,25 @@ game.Digger = me.Entity.extend({
 		}else if(res.b.body.collisionType === me.collision.types.ENEMY_OBJECT) {
 			
 			if(this.renderable.isCurrentAnimation('fire')) {
+				res.b.body.setVelocity(0, 0);
 				res.b.renderable.flicker(750,function() {
 					game.levelManager.removeChild(other);
+					game.data.score += 100;
 				});
 			}else {
+				
+			
 				res.a.pos.sub(res.overlapV);
 				res.a.renderable.flicker(750,() => {
 					me.game.world.removeChild(this);
+
 				});
-				setTimeout(function() {game.playScreen.reset()}, 1000);
+				setTimeout(function() {
+					
+					game.data.highScore += game.data.score;	
+					game.playScreen.reset();
+
+				}, 1000);
 				
 			}
 		}
