@@ -34,11 +34,19 @@ game.Digger = me.Entity.extend({
 		this.leftPressed = false;
 		this.rightPressed = false;
 		this.firePressed = false;
+		this.anyDirectionKeyPressed = false;
 	},
 
 	update: function (dt) {
-
+		
 		this._super(me.Entity, "update", [dt]);
+		console.log(this.anyDirectionKeyPressed);
+
+		if(!this.anyDirectionKeyPressed) {
+			me.audio.playTrack("bg");	
+		}
+		
+		
 
 		if (me.input.isKeyPressed('left')) {
 
@@ -57,7 +65,8 @@ game.Digger = me.Entity.extend({
 			this.diggerAnim("down");			
 
 		}else if (me.input.isKeyPressed('space')) {
-			
+			me.audio.stopTrack();
+			me.audio.play("fire");
 			this.body.vel.x = 0;
 			this.body.vel.y = 0;
 
@@ -102,7 +111,8 @@ game.Digger = me.Entity.extend({
 			this.firePressed = true;
 			
 		}else {
-			
+			this.anyDirectionKeyPressed = false;
+			me.audio.stopTrack();
 			this.body.vel.x = 0;
 			this.body.vel.y = 0;
 
@@ -127,6 +137,7 @@ game.Digger = me.Entity.extend({
 						this.anchorPoint.set(0.5, 1);
 					}
 				}
+				me.audio.stop("fire");
 				this.firePressed = false;
 			}
 			
@@ -160,6 +171,7 @@ game.Digger = me.Entity.extend({
 				res.b.body.setVelocity(0, 0);
 				res.b.renderable.flicker(750,function() {
 					game.levelManager.removeChild(other);
+					me.audio.play("dead");
 					game.data.score += 100;
 				});
 			}else {
@@ -183,8 +195,9 @@ game.Digger = me.Entity.extend({
 	},
 
 	diggerAnim: function(position) {
-
+			
 			if(position === "up") {
+				this.anyDirectionKeyPressed = true;
 				this.firstMove = true;
 				this.body.vel.y -= this.body.accel.y * me.timer.tick;
 				this.body.vel.x = 0;
@@ -205,8 +218,10 @@ game.Digger = me.Entity.extend({
 				this.leftPressed = false;
 				this.rightPressed = false;
 				
+				
 	
 			}else if(position === "down") {
+				this.anyDirectionKeyPressed = true;
 				this.firstMove = true;
 				this.body.vel.y += this.body.accel.y * me.timer.tick;
 				this.body.vel.x = 0;
@@ -231,6 +246,7 @@ game.Digger = me.Entity.extend({
 
 				
 			}else if(position === "left") {
+				this.anyDirectionKeyPressed = true;
 				this.firstMove = true;
 				this.body.vel.x -= this.body.accel.x * me.timer.tick;
 				this.body.vel.y = 0;
@@ -265,9 +281,11 @@ game.Digger = me.Entity.extend({
 				this.leftPressed = true;
 				this.downPressed = false;
 				this.upPressed = false;
-				this.rightPressed = false;			
+				this.rightPressed = false;
+							
 
 			}else if(position === "right") {
+				this.anyDirectionKeyPressed = true;
 				this.body.vel.x += this.body.accel.x * me.timer.tick;
 				this.body.vel.y = 0;
 
@@ -311,6 +329,7 @@ game.Digger = me.Entity.extend({
 				this.downPressed = false;
 				this.leftPressed = false;
 				this.upPressed = false;
+
 				
 				
 			}
