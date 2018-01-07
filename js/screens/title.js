@@ -26,8 +26,8 @@ game.TitleScreen = me.ScreenObject.extend({
             },
 
             draw : function(renderer) {
-                console.log(this.font);
-                // this.font.setFont("yellow");
+                
+                
                 this.font.draw(renderer, this.title, this.pos.x + 230, this.pos.y + 140);
                 this.font.draw(renderer, this.start, this.pos.x + 100, this.pos.y + 240);
                     
@@ -49,7 +49,7 @@ game.TitleScreen = me.ScreenObject.extend({
           if (action === "enter") {
             // play something on tap / enter
             // this will unlock audio on mobile devices
-            
+            me.audio.stopTrack();
             me.state.change(me.state.PLAY);
           }
         });        

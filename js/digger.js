@@ -27,6 +27,8 @@ game.Digger = me.Entity.extend({
 		this.renderable.addAnimation('standV', [1, 2], 300);
 		this.renderable.addAnimation('fire', [14]);
 		this.renderable.setCurrentAnimation('walk');
+		this.initPos();
+		me.audio.playTrack("bg");
 
 		this.fisrtMove = false;
 		this.downPressed = false;
@@ -35,17 +37,24 @@ game.Digger = me.Entity.extend({
 		this.rightPressed = false;
 		this.firePressed = false;
 		this.anyDirectionKeyPressed = false;
+		this.introMove = false;
+		this.soundMon = false;
 	},
 
 	update: function (dt) {
 		
 		this._super(me.Entity, "update", [dt]);
-		console.log(this.anyDirectionKeyPressed);
+		console.log(this.introMove);
 
-		if(!this.anyDirectionKeyPressed) {
-			me.audio.playTrack("bg");	
+		if(this.anyDirectionKeyPressed  && this.introMove) {
+			me.audio.playTrack("bg");
+			this.introMove = false;	
 		}
 		
+		if(this.soundMon) {
+			this.monSound();
+			this.soundMon = false;
+		}
 		
 
 		if (me.input.isKeyPressed('left')) {
@@ -111,8 +120,12 @@ game.Digger = me.Entity.extend({
 			this.firePressed = true;
 			
 		}else {
-			this.anyDirectionKeyPressed = false;
-			me.audio.stopTrack();
+
+			if(this.anyDirectionKeyPressed && !this.introMove) {
+				me.audio.stopTrack();
+				this.introMove = true	
+			}
+			
 			this.body.vel.x = 0;
 			this.body.vel.y = 0;
 
@@ -342,5 +355,36 @@ game.Digger = me.Entity.extend({
 		
 
 	},
+
+	initPos : function() {
+		let _this = this;
+
+		let tween = new me.Tween(this.pos).to({y: 200}, 6000).onComplete(function() {
+			me.audio.stopTrack();
+			_this.introMove = true;
+			_this.soundMon = true;
+			
+			me.input.bindKey(me.input.KEY.LEFT, 'left');
+        me.input.bindKey(me.input.KEY.RIGHT, 'right');
+        me.input.bindKey(me.input.KEY.UP, 'up');
+        me.input.bindKey(me.input.KEY.DOWN, 'down'); 
+        me.input.bindKey(me.input.KEY.SPACE, 'space');
+			
+		}).start();
+	},
+
+	monSound : function() {
+
+		if(this.soundMon) {
+			
+			let _this = this;
+			setTimeout(function() {
+				me.audio.play("monster");
+				_this.soundMon = true;
+			}, 5000);
+			this.soundMon = false;
+		}
+		
+	}
 
 });
