@@ -37,6 +37,6 @@ var game = {
         me.pool.register("monster", game.Monster);
 
         // Start the game.
-        me.state.change(me.state.PLAY);
+        me.state.change(me.state.MENU);
     }
 };
